@@ -5,3 +5,73 @@ generate mock data from
 https://www.mockaroo.com/
 
 Import using 01.
+
+
+Querys  >6
+
+GET employee_details/_count
+
+GET employee_details/_alias
+
+GET employee_details/_mapping
+
+GET employee_details/_search?size=10
+
+
+GET employee_details/_search
+{
+  "query":{
+    "match_phrase": {
+      "last_name": "Janosevic"
+    }
+  }
+}
+
+
+GET employee_details/_search
+{
+  "query":{
+    "match_phrase_prefix": {
+      "firt_name": "fi"
+    }
+  }
+}
+
+GET employee_details/_search
+{
+  "query": {
+    "query_string": {
+      "default_field": "closeddate",
+      "query": "*",
+      "default_operator": "OR"
+    }
+  }
+}
+
+
+
+GET employee_details/_search
+{
+  "query":{
+    "term": {
+      "gender": {
+        "value": "Male"
+      }
+    }
+  }
+}
+
+
+GET employee_details/_search
+{
+  "query":{
+    "terms": {
+      "gender": [
+        "Male"
+      ]
+    }
+  },
+  "fields": [
+    "id","email","ip_address"
+  ]
+}
