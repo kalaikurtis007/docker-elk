@@ -75,3 +75,92 @@ GET employee_details/_search
     "id","email","ip_address"
   ]
 }
+
+
+--------------------------------------------------
+
+GET employee_details/_search
+{
+  "aggs": {
+    "gender_count": {
+      "terms": {
+        "field":"gender"
+      }
+    }
+  }, 
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "range": {
+            "openedDate": {
+              "gte": "01/05/2023",
+              "lte": "now"
+            }
+          }
+        },
+        {
+          "range":{
+            "closeddate": {
+              "gte": "01/05/2023",
+              "lte": "now"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "_source": ["id","ip_address","email","gender"]
+}
+
+GET employee_details/_search
+{
+  "query":{
+    "range":{
+      "openedDate": {
+        "gte": "01/05/2023",
+        "lte": "now"
+      }
+    }
+  }
+}
+
+
+GET employee_details/_search
+{
+  "query":{
+    "range":{
+      "closeddate": {
+        "gte": "01/05/2023",
+        "lte": "now"
+      }
+    }
+  }
+}
+
+
+GET employee_details/_search
+{
+  "query":{
+    "term": {
+      "gender": {
+        "value": "Male"
+      }
+    }
+  }
+}
+
+
+GET employee_details/_search
+{
+  "query":{
+    "terms": {
+      "gender": [
+        "Male"
+      ]
+    }
+  },
+  "fields": [
+    "id","email","ip_address"
+  ]
+}
