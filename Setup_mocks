@@ -164,3 +164,89 @@ GET employee_details/_search
     "id","email","ip_address"
   ]
 }
+-------------------------------------------------------------------------
+part 11
+
+## prefix query
+GET employee_details/_search
+{
+  "query": {
+    "prefix": {
+      "last_name": {
+        "value": "Jan"
+      }
+    }
+  }
+}
+
+##wildcard Query
+GET employee_details/_search
+{
+  "query":{
+    "wildcard": {
+      "last_name": {
+        "value": "sev"
+      }
+    }
+  }
+}
+
+##Component query 
+#must,filter,should
+GET employee_details/_search
+{
+  "query":{
+    "bool":{
+      "must": [
+        {
+         "prefix":{
+           "last_name": {
+             "value": "Jan"
+           }
+         }
+        }
+      ],
+      "filter": [
+        {
+          "range": {
+            "openedDate": {
+              "gte": "01/10/2005",
+              "lte": "now"
+            }
+          }
+        }
+      ],
+      "should": [
+        {
+          "term":{
+            "first_name": {
+              "value": "Alfi"
+            }
+          }
+        },
+        {
+          "term": {
+            "gender": {
+              "value": "Female"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+-----------------------------------------------------------
+part 12
+
+##Index creation part 1 (Analysis)
+1. Converting text into token or terms 
+    sentence: "A quick brown fox jumped over the lazy dog"
+    tokens: [quick, brown,fox, jump, over, lazy, dog]
+
+Analysis is performed by:
+  1. analyzer
+  2. tokenizer
+  3. token filter
+  4. character filter    
+-----------------------------------------------------------
