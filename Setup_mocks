@@ -248,5 +248,50 @@ Analysis is performed by:
   1. analyzer
   2. tokenizer
   3. token filter
-  4. character filter    
+  4. character filter 
+  
+  Where we use analysis?
+    - query
+    - Mapping parameter
+    - index setting
+
+   Analyzer
+    - Analysing text into token or keywords to be search/indexed.
+    - builds tokenstream
+    - Analyzer are provide to parse and analyse different languages.
+    
+    Reader -> tokenizer  -> token filter -> tokenfilter -> token
+
+
 -----------------------------------------------------------
+
+PUT employee-details-copy
+{
+  "settings":{
+     "analysis":{
+       "filter": {
+         "auto_filter":{
+           "type": "edge_ngram",
+           "min_gram":2,
+           "max_gram":32
+         }
+       },
+       "analyzer":{
+         "myanalyzer":{
+           "type":"standard",
+           "max_token_length":5,
+           "stopwords":"_english_"
+         },
+         "autocomplete":{
+           "type":"custom",
+           "tokenizer": "standard",
+           "filter":["lowercase","auto_filter"]
+         }
+       }
+     }
+  },
+  "mappings": {
+    
+  }
+}
+------------------------------------------------------------
