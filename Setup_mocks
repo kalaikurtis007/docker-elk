@@ -262,6 +262,12 @@ Analysis is performed by:
     
     Reader -> tokenizer  -> token filter -> tokenfilter -> token
 
+    example:
+    GET _analyze
+    {
+      "analyzer": "standard",
+      "text": "say hi to the brown dog"
+    }
 
 -----------------------------------------------------------
 
@@ -295,3 +301,42 @@ PUT employee-details-copy
   }
 }
 ------------------------------------------------------------
+part 13  
+standard analyzer: the default analyzer which is used if none is specified.
+parameters of standard analyzer:
+max_token_length: the maximum token length. if a token is seen that exceeds this length then it is split at max_token_length intervals. Default to 255.
+stopwords : a pre-defined stop words list like _english_ or an array containing a list of stop words. Defaults to \_none_.
+stopwords_path: the path to a file containing stop words.
+
+Simple Analyzer: the simple analyzer breaks text into terms whenever it encounters a character which is not a letter. All terms are lower cased.
+ example:
+ GET _analyze
+    {
+      "analyzer": "simple",
+      "text": "say hi to the brown dog"
+    }
+
+whitespace Analyzer: the whitespace analyzer breaks text into terms whenever it encounters a whitespace character.
+  example:
+  GET _analyze
+  {
+    "analyzer": "whitespace",
+    "text": "say hi to the brown dog @ the park"
+  }
+
+-----------------------------------------------
+part -14
+
+Keyword analyzer - no configuration
+Stop analyzer - stopword, stopward_path
+Pattern analyzer- stopword, stopward_path, pattern, lowercase
+Custom analyzer - Tokenizer,char_filter, filter.
+
+Keyword analyzer: will take comple sentance as a keyword.
+  example:
+  GET _analyze
+  {
+    "analyzer": "keyword",
+    "text": "say hi to the brown dog @ the park"
+  }
+
