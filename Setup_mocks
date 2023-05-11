@@ -262,7 +262,7 @@ Analysis is performed by:
     
     Reader -> tokenizer  -> token filter -> tokenfilter -> token
 
-    example:
+    Ex:
     GET _analyze
     {
       "analyzer": "standard",
@@ -309,7 +309,7 @@ stopwords : a pre-defined stop words list like _english_ or an array containing 
 stopwords_path: the path to a file containing stop words.
 
 Simple Analyzer: the simple analyzer breaks text into terms whenever it encounters a character which is not a letter. All terms are lower cased.
- example:
+ Ex:
  GET _analyze
     {
       "analyzer": "simple",
@@ -317,7 +317,7 @@ Simple Analyzer: the simple analyzer breaks text into terms whenever it encounte
     }
 
 whitespace Analyzer: the whitespace analyzer breaks text into terms whenever it encounters a whitespace character.
-  example:
+  Ex:
   GET _analyze
   {
     "analyzer": "whitespace",
@@ -333,10 +333,76 @@ Pattern analyzer- stopword, stopward_path, pattern, lowercase
 Custom analyzer - Tokenizer,char_filter, filter.
 
 Keyword analyzer: will take comple sentance as a keyword.
-  example:
+  Ex:
   GET _analyze
   {
     "analyzer": "keyword",
     "text": "say hi to the brown dog @ the park"
   }
+
+pattern Analyzer: split the text based on the pattern.
+  Ex:
+    GET _analyze
+    {
+      "analyzer": "pattern",
+      "text": "say hi to the brown dog @ the park"
+    }
+
+    patterns are:
+    [abc] - A single characterof a, b, or c
+    [^abc] - any single character except a, b or c
+    [a-z] - any single character in the range a-z
+    \W - [default] any non-word character.
+    and etc..
+---------------------------------------------
+part 15:
+
+  Tokenizer: A tokenizer receives a stream of characters, breaks it up into individual tokens(usally indiviadual words) and outputs a stream of tokens.
+
+  - word tokenizer : break the sentence into  tokens of words. when it found a new word then it will tokenize.
+                    -> standard tokenizer
+                    -> lowercase tokenizer
+                    -> whitespace tokenizer
+  
+  - partial word tokenizer   -> ngram tokenizer: quick -> [qu,ui,ic,ok]
+                             -> edge_ngram tokenizer: quick -> [q,qu,qui,quic,quick]
+  
+  - structured word tokenizer: break into a patterns or keywords
+                               -> keyword tokenizer
+                               -> pattern tokenizer
+                               -> simple_pattern tokenizer
+
+---------------------------------
+
+part 16:
+Mapping: Mapping is the process of defining how a document should be mapped to the search engine, including its searchable characteristics such as which fields are searchable and if/how they are tokenized.
+
+Fields: Each Mapping has a number of fields associated with it which can be used to control how the document metadata is indexed.
+
+Types: The datatype for each field in a document(eg string, numbers, objects etc..)can be controlled via the type mapping.
+   - object data type - JSON documents are hierarchical in nature: the document may contain inner objects which, in turn, may contain inner objects themselves. 
+   - nested
+   - etc
+
+inner logic to save in object and nested type
+
+object 
+{
+  "name":"kalaiselvan",
+  "skills.language":["ruby","javascript"],
+  "skills.level":["expert","beginner"]
+}
+
+In nested
+{
+  "name": "kalaiselvan",
+  {
+    "skills.language":"ruby",
+    "skils.level":"expert"
+  },
+  {
+    "skills.language":"javascript",
+    "skills.level":"beginner"
+  }
+ }
 
