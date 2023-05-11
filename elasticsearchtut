@@ -1,0 +1,96 @@
+Elastic search
+RDBMS->Database->Tables->Columns/Rows
+ES->Index->Types->Documents with properties
+Mapping->is a process of defining how a document fited and it contain our stored and indexed
+ES API
+    ->Document API
+    ->Search API 
+    ->Indices API
+    ->Cluster API
+Document API
+Single Document API              |    Multi Document API
+Index API                        |    Multi get API
+Get API                          |    Bulk API
+Delete API                       |    Delete by Query API
+Update API                       |    Update by Query API
+                                 |    Reindex API
+Index API:
+    The Index API adds or updates a typed JSON document in a specific index, making it searchable.
+           {Employee details is Name of Indexed Name}
+Ex:  Post  Typed Name/doc/01
+     {
+        id:01,
+        name:"Kalaiselvan"
+        Age:32
+     }
+Get API:
+    Allows to get a typed JSON document from the index based on it.
+    Get employee-details/doc/_search ->to list all employee details
+    Get employee-details/doc/_search?size=100
+    Get employee-details/doc/_mapping
+    Get employee-details/doc/_count
+    Get employee-details/doc/_search/_template
+Delete API:
+    Allows to delete a typed JSON document from a specific index based on its id
+Ex: Delete employee-details/doc/103
+    it delete the record of 103 which employee's Id 103.
+Delete by Query:
+    Post  employee-details/_delete_by_Query
+    {
+        "query":{
+            "match":{
+                "EmployeeName":"Kalai"
+            }
+        }
+    }
+Update API:
+    Allows to update a document based on a script provided,The operation get the document (collected with the shard)from the index. run the script (with optional script Language and parameters)and index back. The result (also allows to delete ,or ignore the operation).
+
+    Post  employees-details/doc/106/_update
+        {
+            "script":{
+                "source":"ctx._source_params.val"
+                "Lang":"PainLess"
+                "Params":{
+                val:{
+                    Employeeid:106
+                    Name:"Kalai"
+                    Age:32
+                }
+            }
+            }
+        }
+to update single field
+    post  employee-details/doc/106/_update
+     {"script":{
+        "source":"ctx._source.Age=params.val",
+        "Lang":"Painless",
+        "Params":{
+            val:30
+        }
+     }
+     }
+Update one field:
+    post  employee-details/doc/106/_update
+    {
+        "doc":{
+            "EmployeeName":"Kalai"
+        }
+    }
+Update by Query:
+    Post employee-details/update_by_Query
+    {
+        "Query":{
+            "Match":{
+                "EmployeeName":"Kalai"
+            }
+        }
+        
+        "script":{
+            "Source":"ctx_source.Age=params.val",
+            "Lang":"Painless"
+            "Params":{
+                val:35
+            }
+        }
+    }
