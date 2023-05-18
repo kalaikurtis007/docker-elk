@@ -405,4 +405,43 @@ In nested
     "skills.level":"beginner"
   }
  }
+---------------------------------------
+part-17
+Aggregations provide the ability to group and extract statistics from your data.
 
+Ex: simple aggs
+  GET employees/_search
+  {
+  "aggs": {
+      "group_by_gender": {
+        "terms": {
+          "field": "gender",
+          "size": 10
+        }
+      }
+  }
+  }
+
+
+Ex: with nested Aggs
+
+  GET employees/_search
+  {
+  "aggs": {
+      "group_by_gender": {
+        "terms": {
+          "field": "gender",
+          "size": 10
+        },
+        "aggs": {
+          "count": {
+            "terms": {
+              "field": "openedDate",
+              "size": 10
+            }
+          }
+        }
+      }
+  }
+  }
+--------------------------------------------------------------------------

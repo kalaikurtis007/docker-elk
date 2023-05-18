@@ -1,9 +1,10 @@
-Elastic search
+Elasticsearch:
+------------------------------------------------------------
 RDBMS->Database->Tables->Columns/Rows
 ES->Index->Types->Documents with properties
 Mapping->is a process of defining how a document fited and it contain our stored and indexed
 
-ES API
+Elasticsearch API
     ->Document API
     ->Search API 
     ->Indices API
@@ -30,7 +31,7 @@ Index API:
                 name:"Kalaiselvan"
                 Age:32
             }
-
+----------------------------------------------------------------------------------------
 Get API:
     Allows to get a typed JSON document from the index based on it.
 
@@ -44,13 +45,16 @@ Get API:
 
     GET employee-details/doc/_search/_template
 
+----------------------------------------------------------------------------------------
+
 Delete API:
     Allows to delete a typed JSON document from a specific index based on its id
         
     Ex: 
         DELETE employee-details/doc/103
-            it delete the record of 103 which employee's Id 103.
+            it delete the record of 103 which employees Id 103.
 
+----------------------------------------------------------------------------------------
 Delete by Query:
 
     Ex:
@@ -62,7 +66,7 @@ Delete by Query:
                 }
             }
         }
-
+----------------------------------------------------------------------------------------
 Update API:
     
     Allows to update a document based on a script provided,The operation get the document (collected with the shard)from the index. run the script (with optional script Language and parameters)and index back. The result (also allows to delete ,or ignore the operation).
@@ -83,7 +87,7 @@ Update API:
             }
         }
 
-
+----------------------------------------------------------------------------------------
 To update single field
  
     Ex:
@@ -97,7 +101,7 @@ To update single field
                 }
             }
         }
-
+----------------------------------------------------------------------------------------
 Update one field:
     Ex:
         POST  employee-details/doc/106/_update
@@ -106,7 +110,7 @@ Update one field:
                 "EmployeeName":"Kalai"
             }
         }
-
+----------------------------------------------------------------------------------------
 Update by Query:
     Ex:
         POST employee-details/update_by_Query
@@ -125,3 +129,4 @@ Update by Query:
                 }
             }
         }
+----------------------------------------------------------------------------------------
