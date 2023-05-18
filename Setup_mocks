@@ -1,0 +1,447 @@
+Configure the CSV Import within File Data Visualizer
+The File Data Visualizer feature can be found in Kibana under the Machine Learning > Data Visualizer section. 
+
+generate mock data from 
+https://www.mockaroo.com/
+
+Import using 01.
+
+
+Querys  >6
+
+GET employee_details/_count
+
+GET employee_details/_alias
+
+GET employee_details/_mapping
+
+GET employee_details/_search?size=10
+
+
+GET employee_details/_search
+{
+  "query":{
+    "match_phrase": {
+      "last_name": "Janosevic"
+    }
+  }
+}
+
+
+GET employee_details/_search
+{
+  "query":{
+    "match_phrase_prefix": {
+      "firt_name": "fi"
+    }
+  }
+}
+
+GET employee_details/_search
+{
+  "query": {
+    "query_string": {
+      "default_field": "closeddate",
+      "query": "*",
+      "default_operator": "OR"
+    }
+  }
+}
+
+
+
+GET employee_details/_search
+{
+  "query":{
+    "term": {
+      "gender": {
+        "value": "Male"
+      }
+    }
+  }
+}
+
+
+GET employee_details/_search
+{
+  "query":{
+    "terms": {
+      "gender": [
+        "Male"
+      ]
+    }
+  },
+  "fields": [
+    "id","email","ip_address"
+  ]
+}
+
+
+--------------------------------------------------
+
+GET employee_details/_search
+{
+  "aggs": {
+    "gender_count": {
+      "terms": {
+        "field":"gender"
+      }
+    }
+  }, 
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "range": {
+            "openedDate": {
+              "gte": "01/05/2023",
+              "lte": "now"
+            }
+          }
+        },
+        {
+          "range":{
+            "closeddate": {
+              "gte": "01/05/2023",
+              "lte": "now"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "_source": ["id","ip_address","email","gender"]
+}
+
+GET employee_details/_search
+{
+  "query":{
+    "range":{
+      "openedDate": {
+        "gte": "01/05/2023",
+        "lte": "now"
+      }
+    }
+  }
+}
+
+
+GET employee_details/_search
+{
+  "query":{
+    "range":{
+      "closeddate": {
+        "gte": "01/05/2023",
+        "lte": "now"
+      }
+    }
+  }
+}
+
+
+GET employee_details/_search
+{
+  "query":{
+    "term": {
+      "gender": {
+        "value": "Male"
+      }
+    }
+  }
+}
+
+
+GET employee_details/_search
+{
+  "query":{
+    "terms": {
+      "gender": [
+        "Male"
+      ]
+    }
+  },
+  "fields": [
+    "id","email","ip_address"
+  ]
+}
+-------------------------------------------------------------------------
+part 11
+
+## prefix query
+GET employee_details/_search
+{
+  "query": {
+    "prefix": {
+      "last_name": {
+        "value": "Jan"
+      }
+    }
+  }
+}
+
+##wildcard Query
+GET employee_details/_search
+{
+  "query":{
+    "wildcard": {
+      "last_name": {
+        "value": "sev"
+      }
+    }
+  }
+}
+
+##Component query 
+#must,filter,should
+GET employee_details/_search
+{
+  "query":{
+    "bool":{
+      "must": [
+        {
+         "prefix":{
+           "last_name": {
+             "value": "Jan"
+           }
+         }
+        }
+      ],
+      "filter": [
+        {
+          "range": {
+            "openedDate": {
+              "gte": "01/10/2005",
+              "lte": "now"
+            }
+          }
+        }
+      ],
+      "should": [
+        {
+          "term":{
+            "first_name": {
+              "value": "Alfi"
+            }
+          }
+        },
+        {
+          "term": {
+            "gender": {
+              "value": "Female"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+-----------------------------------------------------------
+part 12
+
+##Index creation part 1 (Analysis)
+1. Converting text into token or terms 
+    sentence: "A quick brown fox jumped over the lazy dog"
+    tokens: [quick, brown,fox, jump, over, lazy, dog]
+
+Analysis is performed by:
+  1. analyzer
+  2. tokenizer
+  3. token filter
+  4. character filter 
+  
+  Where we use analysis?
+    - query
+    - Mapping parameter
+    - index setting
+
+   Analyzer
+    - Analysing text into token or keywords to be search/indexed.
+    - builds tokenstream
+    - Analyzer are provide to parse and analyse different languages.
+    
+    Reader -> tokenizer  -> token filter -> tokenfilter -> token
+
+    Ex:
+    GET _analyze
+    {
+      "analyzer": "standard",
+      "text": "say hi to the brown dog"
+    }
+
+-----------------------------------------------------------
+
+PUT employee-details-copy
+{
+  "settings":{
+     "analysis":{
+       "filter": {
+         "auto_filter":{
+           "type": "edge_ngram",
+           "min_gram":2,
+           "max_gram":32
+         }
+       },
+       "analyzer":{
+         "myanalyzer":{
+           "type":"standard",
+           "max_token_length":5,
+           "stopwords":"_english_"
+         },
+         "autocomplete":{
+           "type":"custom",
+           "tokenizer": "standard",
+           "filter":["lowercase","auto_filter"]
+         }
+       }
+     }
+  },
+  "mappings": {
+    
+  }
+}
+------------------------------------------------------------
+part 13  
+standard analyzer: the default analyzer which is used if none is specified.
+parameters of standard analyzer:
+max_token_length: the maximum token length. if a token is seen that exceeds this length then it is split at max_token_length intervals. Default to 255.
+stopwords : a pre-defined stop words list like _english_ or an array containing a list of stop words. Defaults to \_none_.
+stopwords_path: the path to a file containing stop words.
+
+Simple Analyzer: the simple analyzer breaks text into terms whenever it encounters a character which is not a letter. All terms are lower cased.
+ Ex:
+ GET _analyze
+    {
+      "analyzer": "simple",
+      "text": "say hi to the brown dog"
+    }
+
+whitespace Analyzer: the whitespace analyzer breaks text into terms whenever it encounters a whitespace character.
+  Ex:
+  GET _analyze
+  {
+    "analyzer": "whitespace",
+    "text": "say hi to the brown dog @ the park"
+  }
+
+-----------------------------------------------
+part -14
+
+Keyword analyzer - no configuration
+Stop analyzer - stopword, stopward_path
+Pattern analyzer- stopword, stopward_path, pattern, lowercase
+Custom analyzer - Tokenizer,char_filter, filter.
+
+Keyword analyzer: will take comple sentance as a keyword.
+  Ex:
+  GET _analyze
+  {
+    "analyzer": "keyword",
+    "text": "say hi to the brown dog @ the park"
+  }
+
+pattern Analyzer: split the text based on the pattern.
+  Ex:
+    GET _analyze
+    {
+      "analyzer": "pattern",
+      "text": "say hi to the brown dog @ the park"
+    }
+
+    patterns are:
+    [abc] - A single characterof a, b, or c
+    [^abc] - any single character except a, b or c
+    [a-z] - any single character in the range a-z
+    \W - [default] any non-word character.
+    and etc..
+---------------------------------------------
+part 15:
+
+  Tokenizer: A tokenizer receives a stream of characters, breaks it up into individual tokens(usally indiviadual words) and outputs a stream of tokens.
+
+  - word tokenizer : break the sentence into  tokens of words. when it found a new word then it will tokenize.
+                    -> standard tokenizer
+                    -> lowercase tokenizer
+                    -> whitespace tokenizer
+  
+  - partial word tokenizer   -> ngram tokenizer: quick -> [qu,ui,ic,ok]
+                             -> edge_ngram tokenizer: quick -> [q,qu,qui,quic,quick]
+  
+  - structured word tokenizer: break into a patterns or keywords
+                               -> keyword tokenizer
+                               -> pattern tokenizer
+                               -> simple_pattern tokenizer
+
+---------------------------------
+
+part 16:
+Mapping: Mapping is the process of defining how a document should be mapped to the search engine, including its searchable characteristics such as which fields are searchable and if/how they are tokenized.
+
+Fields: Each Mapping has a number of fields associated with it which can be used to control how the document metadata is indexed.
+
+Types: The datatype for each field in a document(eg string, numbers, objects etc..)can be controlled via the type mapping.
+   - object data type - JSON documents are hierarchical in nature: the document may contain inner objects which, in turn, may contain inner objects themselves. 
+   - nested
+   - etc
+
+inner logic to save in object and nested type
+
+object 
+{
+  "name":"kalaiselvan",
+  "skills.language":["ruby","javascript"],
+  "skills.level":["expert","beginner"]
+}
+
+In nested
+{
+  "name": "kalaiselvan",
+  {
+    "skills.language":"ruby",
+    "skils.level":"expert"
+  },
+  {
+    "skills.language":"javascript",
+    "skills.level":"beginner"
+  }
+ }
+---------------------------------------
+part-17
+Aggregations provide the ability to group and extract statistics from your data.
+
+Ex: simple aggs
+  GET employees/_search
+  {
+  "aggs": {
+      "group_by_gender": {
+        "terms": {
+          "field": "gender",
+          "size": 10
+        }
+      }
+  }
+  }
+
+
+Ex: with nested Aggs
+
+  GET employees/_search
+  {
+  "aggs": {
+      "group_by_gender": {
+        "terms": {
+          "field": "gender",
+          "size": 10
+        },
+        "aggs": {
+          "count": {
+            "terms": {
+              "field": "openedDate",
+              "size": 10
+            }
+          }
+        }
+      }
+  }
+  }
+--------------------------------------------------------------------------
